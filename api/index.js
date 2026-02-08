@@ -2,13 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const urllib = require('urllib');
 const cors = require('cors');
-const path = require('path');
 
 const app = express();
-// Render سيعطينا بورت تلقائي، أو نستخدم 3000 للتجربة
-const PORT = process.env.PORT || 3000;
 
-// إعدادات البيئة (سنضيفها في موقع الاستضافة لاحقاً)
+// إعدادات البيئة (هنجيبها من إعدادات موقع فيرسل)
 const config = {
     public_key: process.env.MONGO_PUBLIC_KEY,
     private_key: process.env.MONGO_PRIVATE_KEY,
@@ -18,12 +15,8 @@ const config = {
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public'))); // لتشغيل ملفات الواجهة
 
-// صفحة البداية
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// ملحوظة: شلنا كود الـ static files لأن فيرسل بيعرض مجلد public تلقائي
 
 // 1. API الإنشاء
 app.post('/api/create', async (req, res) => {
@@ -89,6 +82,5 @@ app.post('/api/delete', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// تصدير التطبيق عشان فيرسل يشغله (بدل app.listen)
+module.exports = app;
